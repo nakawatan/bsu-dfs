@@ -3,7 +3,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
     $root = dirname(__FILE__, 2);
-    include $root.'/include/database.php';
+    include_once $root.'/include/database.php';
     // include $root."/classes/qr.php";
     include_once $root.'/include/qrcode.php';
 
@@ -65,6 +65,7 @@
                         $this->authors = $row['authors'];
                         $this->method = $row['method'];
                         $this->qr_code_link = $row['qr_code_link'];
+                        $this->file = $row['file'];
                     }
                 // close the result.
                 // mysqli_free_result($result);
@@ -84,6 +85,7 @@
                     authors,
                     method,
                     qr_code_link,
+                    file,
                     created_at
                 )
             values
@@ -93,11 +95,12 @@
                     ?,
                     ?,
                     ?,
+                    ?,
                     now()
                 )
             ;";
             $stmt = $db->db->prepare($sql);
-            $stmt->bind_param('sssss', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link);
+            $stmt->bind_param('ssssss', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file);
 
             $stmt->execute();
 
@@ -120,11 +123,12 @@
                 title=?,
                 authors=?,
                 method=?,
-                qr_code_link=?
+                qr_code_link=?,
+                file=?
             where id = ?
             ;";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param('sssssi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->id);
+            $stmt->bind_param('ssssssi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->id);
 
             $stmt->execute();
 
@@ -167,6 +171,26 @@
             $this->qr_code_link = "/upload/".$filename;
             
             $this->Update();
+        }
+
+        function UploadFile() {
+            if(isset($_FILES['file'])){
+                $errors= array();
+                $file_name = $_FILES['file']['name'];
+                $file_size =$_FILES['file']['size'];
+                $file_tmp =$_FILES['file']['tmp_name'];
+                $file_type=$_FILES['file']['type'];
+                $file_ext=strtolower(end(explode('.',$_FILES['file']['name'])));
+                
+                $root = dirname(__FILE__, 2);
+                $tempDir = $root."/upload/research/";
+                $filename=$tempDir.$this->id.$file_name;
+                $this->file="/upload/research/".$this->id.$file_name;
+    
+                move_uploaded_file($file_tmp,$filename);
+                return $filename;
+            }
+            return "";
         }
     }
 ?>

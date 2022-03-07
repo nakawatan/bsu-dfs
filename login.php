@@ -2,14 +2,22 @@
 <?php 
     include 'classes/user.php';
     $user = new User();
+    session_start();
     if (isset($_POST['submit-login'])){
         $user->username = $_POST['username-input'];
         $user->password = $_POST['password-input'];
         $userData = $user->login();
 
         if ($userData["id"] > 0){
-            session_start();
             $_SESSION["user"] = $userData;
+            header('Location: '.'/index.php');
+        }
+    }
+
+    if (isset($_SESSION["user"])){
+        if ($_SESSION["user"]["user_level_id"] != "1"){
+            header('Location: '.'/student/');
+        }else {
             header('Location: '.'/index.php');
         }
     }
@@ -17,6 +25,8 @@
 <html lang="en">
     <head>
         <?php include'links.php'; ?>
+        <meta name="google-signin-client_id" content="775340702878-lm3rec066vv65gjr6b6bbdjqckrvljra.apps.googleusercontent.com">
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
     </head>
     <body class="bg-primary">
         <div id="layoutAuthentication">
@@ -40,6 +50,7 @@
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                                 <!-- <a class="small" href="password.html">Forgot Password?</a> -->
                                                 <button type="submit" class="btn btn-primary" name="submit-login">Login</button>
+                                                <div class="text-center"><div type="submit" class="g-signin2" data-longtitle="true" data-onsuccess="onSignIn" style="display:inline-block"></div></div>
                                             </div>
                                         </form>
                                     </div>
@@ -64,5 +75,37 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
+
+        <script>
+            function onSignIn(googleUser) {
+                var profile = googleUser.getBasicProfile();
+                // $('#first_name').val(profile.getGivenName());
+                // $('#last_name').val(profile.getFamilyName());
+                // $('#google_image').val(profile.getImageUrl());
+                // $('#email_hidden').val(profile.getEmail());
+                // $('#google_id').val(profile.getId());
+                var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut().then(function () {
+                    console.log('User signed out.');
+                });
+                // $('#login').submit();
+                $.ajax({
+                    url: '/api/',
+                    data: {
+                        method:"student_login",
+                        username:profile.getEmail(),
+                        password:profile.getId(),
+                        email:profile.getEmail(),
+                        google_id:profile.getId(),
+                        image:profile.getImageUrl()
+                    },
+                    method: 'POST',
+                    dataType:"json",
+                    success: function(response) {
+                        window.location.href = "/student/";
+                    }
+                });
+            }
+        </script>
     </body>
 </html>

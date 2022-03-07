@@ -6,6 +6,7 @@
     include $root.'/classes/user.php';
     include $root.'/classes/department.php';
     include_once $root.'/classes/course.php';
+    include_once $root.'/classes/research.php';
     $result["status"] = "ok";
 
     if (isset($_REQUEST['method'])){
@@ -49,7 +50,7 @@
                         $user->Update();
                 
                         $result["status"] = "ok";
-                        $result["user"]=$user;
+                        $result["obj"]=$user;
                     }else {
                         $result["status"]="error";
                         $result["msg"]="Record Does not exist";
@@ -93,7 +94,7 @@
                         $user->Save();
                 
                         $result["status"] = "ok";
-                        $result["user"]=$user;
+                        $result["obj"]=$user;
                     }else {
                         $result["status"]="error";
                         $result["msg"] ="Username already exist";
@@ -103,6 +104,58 @@
                     $result["status"]="error";
                     $result["msg"] ="Username is required";
                 }
+                break;
+            case "student_login":
+                $user = new User();
+                $arr = array();
+    
+                if (isset($_REQUEST["username"])) {
+                    $user->username = $_REQUEST["username"];
+                    $user->checkUsername();
+        
+                    if ($user->id == 0){
+                        if (isset($_REQUEST["username"])) {
+                            $user->username = $_REQUEST["username"];
+                        }
+                        if (isset($_REQUEST["password"])) {
+                            $user->password = $_REQUEST["password"];
+                        }
+                        if (isset($_REQUEST["email"])) {
+                            $user->email = $_REQUEST["email"];
+                        }
+                        
+                        // hard code user level for student
+                        $user->user_level_id = 2;
+                
+                        if (isset($_REQUEST["google_id"])) {
+                            $user->google_id = $_REQUEST["google_id"];
+                        }
+                
+                        if (isset($_REQUEST["image"])) {
+                            $user->image = $_REQUEST["image"];
+                        }
+                
+                        $user->Save();
+                        $user->checkUsername();
+                
+                        $result["status"] = "ok";
+                        $result["obj"]=$user;
+                        $arr["id"] = $user->id;
+                        $arr["username"] = $user->username;
+                        $arr["email"] = $user->email;
+                        $arr["user_level_id"] = $user->user_level_id;
+                        $arr["google_id"] = $user->google_id;
+                        $arr["image"] = $user->image;
+                    }
+                    
+                }else {
+                    $result["status"]="error";
+                    $result["msg"] ="Username is required";
+                }
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+                $_SESSION["user"] = $arr;
                 break;
             case "delete_user":
                 if (isset($_REQUEST["id"])){
@@ -141,7 +194,7 @@
                         $obj->Update();
                 
                         $result["status"] = "ok";
-                        $result["user"]=$obj;
+                        $result["obj"]=$obj;
                     }else {
                         $result["status"]="error";
                         $result["msg"]="Record Does not exist";
@@ -203,7 +256,7 @@
                         $obj->Update();
                 
                         $result["status"] = "ok";
-                        $result["user"]=$obj;
+                        $result["obj"]=$obj;
                     }else {
                         $result["status"]="error";
                         $result["msg"]="Record Does not exist";
@@ -248,6 +301,121 @@
                 }
                 break;
 
+            // research API
+            case "get_encoded_research":
+                if (isset($_REQUEST['id'])){
+                    $tmp = base64_decode($_REQUEST['id']);
+                    $tmpParts = explode("DFS::",$tmp);
+                    $id = 0;
+                    if (count($tmpParts) > 1) {
+                        
+                        $obj = new Research();
+                        $obj->id = $tmpParts[1];
+                        $obj->get_research();
+                        $result=array();
+                        
+                        if ($obj->id > 0) {
+                            $result["status"] = "ok";
+                            $result["data"]=$obj;
+                        }else {
+                            $result["status"]="err";
+                            $result["msg"]="Invalid QR code";
+                        }
+                    }else {
+                        $result["status"]="err";
+                        $result["msg"]="Invalid QR code";
+                    }
+                    
+                }else {
+                    $result["status"]="err";
+                    $result["msg"]="ID must be set";
+                }
+                
+                break;
+            case "update_research":
+                $obj = new Research();
+                if (isset($_REQUEST["id"])) {
+                    $obj->id = $_REQUEST["id"];
+        
+                    // check if department exist
+                    $obj->get_research();
+        
+                    if ($obj->id > 0){
+                        $obj->UploadFile();
+                        if (isset($_REQUEST["abstract"])) {
+                            $obj->abstract = $_REQUEST["abstract"];
+                        }
+
+                        if (isset($_REQUEST["title"])) {
+                            $obj->title = $_REQUEST["title"];
+                        }
+
+                        if (isset($_REQUEST["authors"])) {
+                            $obj->authors = $_REQUEST["authors"];
+                        }
+
+                        if (isset($_REQUEST["r_method"])) {
+                            $obj->method = $_REQUEST["r_method"];
+                        }
+                
+                        $obj->Update();
+                
+                        $result["status"] = "ok";
+                        $result["obj"]=$obj;
+                    }else {
+                        $result["status"]="error";
+                        $result["msg"]="Record Does not exist";
+                    }
+        
+                    
+                }else {
+                    $result["status"]="error";
+                    $result["msg"]="No valid id";
+                }
+                break;
+            case "new_research":
+                $obj = new Research();
+                
+                $obj->UploadFile();
+    
+                if (isset($_REQUEST["abstract"])) {
+                    $obj->abstract = $_REQUEST["abstract"];
+                }
+
+                if (isset($_REQUEST["title"])) {
+                    $obj->title = $_REQUEST["title"];
+                }
+
+                if (isset($_REQUEST["authors"])) {
+                    $obj->authors = $_REQUEST["authors"];
+                }
+
+                if (isset($_REQUEST["r_method"])) {
+                    $obj->method = $_REQUEST["r_method"];
+                }
+                $obj->Save();
+                break;
+            case "delete_research":
+                if (isset($_REQUEST["id"])){
+                    $obj = new Research();
+                    $obj->id = $_REQUEST["id"];
+                    // check if user exist
+                    $obj->get_research();
+                    
+                    if ($obj->id >0){
+                        $obj->delete();
+                    }else {
+                        $result["status"]="error";
+                        $result["msg"]="Record Does not exist";
+                    }
+                    
+                
+                }else {
+                    $result["status"]="err";
+                    $result["msg"]="ID must be set";
+                }
+                break;
+
             default:
                 $result["status"]="error";
                 $result["msg"]="Invalid method";
@@ -258,5 +426,4 @@
     }
 
     echo json_encode($result);
-
 ?>

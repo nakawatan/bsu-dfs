@@ -61,7 +61,7 @@
                                                 <td>${row['username']}</td>
                                                 <td>${row['email']}</td>
                                                 <td>${row['user_level_name']}</td>
-                                                <td>${row['image']}</td>
+                                                <td><img src='${row['image']}'></img></td>
                                                 <td>
                                                     <button class='btn btn-primary' onclick='OpenEditModal(this);'><i class='fas fa-edit'></i></button>
                                                     <button class='btn btn-danger' onclick='openDeleteModal(${row['id']})'><i class='fas fa-trash'></i></button>

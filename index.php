@@ -1,3 +1,6 @@
+<?php  
+    header('Location: '.'/research.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
