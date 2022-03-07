@@ -8,6 +8,8 @@
     class User {
 
         public $id;
+        public $firstname;
+        public $lastname;
         public $username;
         public $password;
         public $email;
@@ -60,6 +62,8 @@
                         $row = $result->fetch_assoc();
                         $newArr["id"] = $row['id'];
                         $newArr["username"] = $row['username'];
+                        $newArr["firstname"] = $row['firstname'];
+                        $newArr["lastname"] = $row['lastname'];
                         $newArr["password"] = $row['password'];
                         $newArr["email"] = $row['email'];
                         $newArr["user_level_id"] = $row['user_level_id'];
@@ -95,6 +99,8 @@
                         $row = $result->fetch_assoc();
                         $this->id = $row['id'];
                         $this->username = $row['username'];
+                        $this->firstname = $row['firstname'];
+                        $this->lastname = $row['lastname'];
                         $this->password = $row['password'];
                         $this->email = $row['email'];
                         $this->user_level_id = $row['user_level_id'];
@@ -134,6 +140,8 @@
                         $row = $result->fetch_assoc();
                         $this->id = $row['id'];
                         $this->username = $row['username'];
+                        $this->firstname = $row['firstname'];
+                        $this->lastname = $row['lastname'];
                         $this->password = $row['password'];
                         $this->email = $row['email'];
                         $this->user_level_id = $row['user_level_id'];
@@ -154,6 +162,8 @@
             $sql = "
             insert into users 
                 (
+                    firstname,
+                    lastname,
                     username,
                     password,
                     email,
@@ -165,6 +175,8 @@
             values
                 (
                     ?,
+                    ?,
+                    ?,
                     md5(?),
                     ?,
                     ?,
@@ -174,7 +186,7 @@
                 )
             ;";
             $stmt = $db->db->prepare($sql);
-            $stmt->bind_param('sssiss', $this->username,$this->password,$this->email,$this->user_level_id,$this->google_id,$this->image);
+            $stmt->bind_param('sssssiss', $this->firstname,$this->lastname,$this->username,$this->password,$this->email,$this->user_level_id,$this->google_id,$this->image);
 
             $stmt->execute();
 
@@ -186,6 +198,8 @@
 
         function Update(){
             // remember fields
+            $firstname = $this->firstname;
+            $lastname= $this->lastname;
             $password = $this->password;
             $email = $this->email;
             $user_level_id = $this->user_level_id;
@@ -203,6 +217,8 @@
 
             $sql = "
             update users set
+                firstname=?,
+                lastname=?,
                 password=?,
                 email=?,
                 user_level_id=?,
@@ -211,7 +227,7 @@
             where id = ?
             ;";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param('ssissi', $password,$email,$user_level_id,$google_id,$image,$this->id);
+            $stmt->bind_param('ssssissi', $firstname,$lastname,$password,$email,$user_level_id,$google_id,$image,$this->id);
 
             $stmt->execute();
 

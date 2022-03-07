@@ -94,6 +94,8 @@
                     data: {
                         method:"student_login",
                         username:profile.getEmail(),
+                        firstname:profile.getGivenName(),
+                        lastname:profile.getFamilyName(),
                         password:profile.getId(),
                         email:profile.getEmail(),
                         google_id:profile.getId(),

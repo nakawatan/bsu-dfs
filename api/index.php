@@ -35,6 +35,12 @@
                         if (isset($_REQUEST["email"])) {
                             $user->email = $_REQUEST["email"];
                         }
+                        if (isset($_REQUEST["firstname"])) {
+                            $user->firstname = $_REQUEST["firstname"];
+                        }
+                        if (isset($_REQUEST["lastname"])) {
+                            $user->lastname = $_REQUEST["lastname"];
+                        }
                         if (isset($_REQUEST["user_level_id"])) {
                             $user->user_level_id = $_REQUEST["user_level_id"];
                         }
@@ -70,6 +76,12 @@
                     $user->checkUsername();
         
                     if ($user->id == 0){
+                        if (isset($_REQUEST["firstname"])) {
+                            $user->firstname = $_REQUEST["firstname"];
+                        }
+                        if (isset($_REQUEST["lastname"])) {
+                            $user->lastname = $_REQUEST["lastname"];
+                        }
                         if (isset($_REQUEST["username"])) {
                             $user->username = $_REQUEST["username"];
                         }
@@ -116,6 +128,12 @@
                     if ($user->id == 0){
                         if (isset($_REQUEST["username"])) {
                             $user->username = $_REQUEST["username"];
+                        }
+                        if (isset($_REQUEST["firstname"])) {
+                            $user->firstname = $_REQUEST["firstname"];
+                        }
+                        if (isset($_REQUEST["lastname"])) {
+                            $user->lastname = $_REQUEST["lastname"];
                         }
                         if (isset($_REQUEST["password"])) {
                             $user->password = $_REQUEST["password"];

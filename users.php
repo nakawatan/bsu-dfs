@@ -37,18 +37,22 @@
                                     <thead>
                                         <tr>
                                             <th>Username</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
                                             <th>User Level</th>
-                                            <th>Image</th>
+                                            <!-- <th>Image</th> -->
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
                                             <th>Username</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
                                             <th>User Level</th>
-                                            <th>Image</th>
+                                            <!-- <th>Image</th> -->
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
@@ -59,9 +63,10 @@
                                             echo "
                                             <tr data-attr-details='${data}'>
                                                 <td>${row['username']}</td>
+                                                <td>${row['firstname']}</td>
+                                                <td>${row['lastname']}</td>
                                                 <td>${row['email']}</td>
                                                 <td>${row['user_level_name']}</td>
-                                                <td><img src='${row['image']}'></img></td>
                                                 <td>
                                                     <button class='btn btn-primary' onclick='OpenEditModal(this);'><i class='fas fa-edit'></i></button>
                                                     <button class='btn btn-danger' onclick='openDeleteModal(${row['id']})'><i class='fas fa-trash'></i></button>
@@ -116,6 +121,14 @@
                     <div class="mb-3">
                         <label for="username-input" class="form-label">Username:</label>
                         <input type="text" class="form-control" id="username-input" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="firstname-input" class="form-label">Firstname:</label>
+                        <input type="text" class="form-control" id="firstname-input">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastname-input" class="form-label">Lastname:</label>
+                        <input type="text" class="form-control" id="lastname-input">
                     </div>
                     <div class="mb-3">
                         <label for="password-input" class="form-label">Password:</label>
@@ -244,6 +257,8 @@
                 data = JSON.parse($(elem).parent().parent("tr").attr("data-attr-details"));
                 
                 $('#username-input').val(data.username);
+                $('#firstname-input').val(data.firstname);
+                $('#lastname-input').val(data.lastname);
                 $('#password-input').val(data.password);
                 $('#email-input').val(data.email);
                 $('#user-level-input').val(data.user_level_id);
@@ -256,6 +271,8 @@
                             data: {
                                 method:"update_user",
                                 id : data.id,
+                                firstname:$('#firstname-input').val(),
+                                lastname:$('#lastname-input').val(),
                                 password:$('#password-input').val(),
                                 email:$('#email-input').val(),
                                 user_level_id:$('#user-level-input').val()
@@ -290,6 +307,8 @@
                             data: {
                                 method:"new_user",
                                 username : $('#username-input').val(),
+                                firstname:$('#firstname-input').val(),
+                                lastname:$('#lastname-input').val(),
                                 password:$('#password-input').val(),
                                 email:$('#email-input').val(),
                                 user_level_id:$('#user-level-input').val()
@@ -323,6 +342,16 @@
             function validateform(){
                 if($('#username-input').val() == ""){
                     $('.error-alert-text').text("Username is required.");
+                    $('#error-alert-modal').modal('show');
+                    return false;
+                }
+                if($('#firstname-input').val() == ""){
+                    $('.error-alert-text').text("Firstname is required.");
+                    $('#error-alert-modal').modal('show');
+                    return false;
+                }
+                if($('#lastname-input').val() == ""){
+                    $('.error-alert-text').text("Lastname is required.");
                     $('#error-alert-modal').modal('show');
                     return false;
                 }
