@@ -375,6 +375,10 @@
                         if (isset($_REQUEST["r_method"])) {
                             $obj->method = $_REQUEST["r_method"];
                         }
+
+                        if (isset($_REQUEST["major_id"])) {
+                            $obj->course_id = $_REQUEST["major_id"];
+                        }
                 
                         $obj->Update();
                 
@@ -411,6 +415,11 @@
                 if (isset($_REQUEST["r_method"])) {
                     $obj->method = $_REQUEST["r_method"];
                 }
+
+                if (isset($_REQUEST["major_id"])) {
+                    $obj->course_id = $_REQUEST["major_id"];
+                }
+                
                 $obj->Save();
                 break;
             case "delete_research":

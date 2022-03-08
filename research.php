@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <?php
     include 'classes/research.php';
+    include 'classes/course.php';
     $obj = new Research();
+    if (isset($_REQUEST['filter-major-input'])){
+        $obj->course_id = $_REQUEST['filter-major-input'];
+    }
+
     $data = $obj->get_researches();
+
+    $course = new Course();
+    $courses = $course->get_courses();
+    
 
     // $obj->abstract = "6 abstract";
     // $obj->title = "6 title";
@@ -35,6 +44,34 @@
                                 <button class="btn btn-primary" onclick="openAddModal();" style="float:right"><i class='fas fa-edit'></i></button>
                             </div>
                             <div class="card-body">
+                            <form method="get">
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                    <div class="mb-3">
+                                        <label for="user-level-input" class="form-label">Major:</label>
+                                        <select name="filter-major-input" class="form-select" id="filter-major-input">
+                                            <option value='0'>--Select Major--</option>
+                                            <?php 
+                                            foreach($courses as $row) {
+                                                $selected = "";
+                                                if ($obj->course_id == $row['id']) {
+                                                    $selected = "selected";
+                                                }
+                                                echo "<option ${selected} value='${row['id']}'>${row['name']}</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    </tr>
+                                    <tr>
+                                    <div class="mb-3">
+                                        <button class="btn btn-warning">Filter</button>
+                                    </div>
+                                    </tr>
+                             </tbody>
+                            </table>
+                            </form>
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
@@ -42,6 +79,7 @@
                                             <th>Title</th>
                                             <th>Authors</th>
                                             <th>Method</th>
+                                            <th>Major</th>
                                             <th>File</th>
                                             <th>QR Code</th>
                                         </tr>
@@ -52,6 +90,7 @@
                                             <th>Title</th>
                                             <th>Authors</th>
                                             <th>Method</th>
+                                            <th>Major</th>
                                             <th>File</th>
                                             <th>QR Code</th>
                                         </tr>
@@ -65,6 +104,7 @@
                                                 <td>${row['abstract']}</td>
                                                 <td>${row['title']}</td>
                                                 <td>${row['authors']}</td>
+                                                <td>${row['course']}</td>
                                                 <td>${row['method']}</td>
                                                 <td>${row['file']}</td>
                                                 <td><img src='${row['qr_code_link']}'></img></td>
@@ -141,6 +181,16 @@
                     <div class="mb-3">
                         <label for="method-input" class="form-label">Method:</label>
                         <input type="text" class="form-control" id="method-input">
+                    </div>
+                    <div class="mb-3">
+                        <label for="major-input" class="form-label">Major:</label>
+                        <select name="major-input" class="form-select" id="major-input">
+                        <?php 
+                        foreach($courses as $row) {
+                            echo "<option ${selected} value='${row['id']}'>${row['name']}</option>";
+                        }
+                        ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="file-input" class="form-label">File:</label>
@@ -247,6 +297,8 @@
                 $('#title-input').val(data.title);
                 $('#method-input').val(data.method);
                 $('#authors-input').val(data.authors);
+                $('#major-input').val(data.course_id);
+                console.log(data);
 
                 //intiate click events
                 $('#confirm-update-btn').unbind('click').on('click',function(){
@@ -263,6 +315,7 @@
                         formData.append("title",$('#title-input').val());
                         formData.append("authors",$('#authors-input').val());
                         formData.append("r_method",$('#method-input').val());
+                        formData.append("major_id",$('#major-input').val());
                         $.ajax({
                             url: '/api/',
                             // data: {
@@ -315,6 +368,7 @@
                         formData.append("title",$('#title-input').val());
                         formData.append("authors",$('#authors-input').val());
                         formData.append("r_method",$('#method-input').val());
+                        formData.append("major_id",$('#major-input').val());
                         $.ajax({
                             url: '/api/',
                             // data: {
@@ -349,6 +403,7 @@
                 $('#title-input').val('');
                 $('#authors-input').val('');
                 $('#method-input').val('');
+                $('#major-input').val('');
             }
 
             function validateform(){
@@ -374,6 +429,8 @@
                 }
                 return true;
             }
+
+            // table filtering
         </script>
     </body>
 </html>

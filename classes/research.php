@@ -15,20 +15,52 @@
         public $authors;
         public $method;
         public $qr_code_link;
+        public $course;
+        public $course_id;
         public $QRPREFIX="DFS::";
 
         function get_researches () {
             $db = new DB();
             $db->connect();
 
-            $sql = "select * from researches where deleted_at is null;";
+            $sql = "select researches.*,courses.name as course from researches inner join courses on courses.id = researches.course_id where researches.deleted_at is null";
 
-            $result=$db->fetch($sql);
-            $db->close();
+            $types = "";
+            $params = array();
             $data = [];
+            if ($this->course_id > 0){
+                $types = $types."i";
+                $sql = $sql . " and course_id = ?";
+                $params[] = $this->course_id;
+            }
 
-            while($row = $result->fetch_assoc()) {
-                $data[]=$row;
+            if (count($params) > 0){
+                $stmt = $db->prepare($sql);
+                $id = $this->id;
+    
+                // reset id
+                $this->id=0;
+    
+                $stmt->bind_param($types, ...$params);
+    
+                $stmt->execute();
+    
+                $result = $stmt->get_result();
+                $db->close();
+                // return $result;
+                if ($result)
+                {
+                    while($row = $result->fetch_assoc()) {
+                        $data[]=$row;
+                    }
+                }
+            }else {
+                $result=$db->fetch($sql);
+                $db->close();
+
+                while($row = $result->fetch_assoc()) {
+                    $data[]=$row;
+                }
             }
             
             return $data;
@@ -38,7 +70,7 @@
             $db = new DB();
             $db->connect();
 
-            $sql = "select * from researches where deleted_at is null and id = ?;";
+            $sql = "select researches.*,courses.name as course from researches inner join courses on courses.id = researches.course_id where researches.deleted_at is null and researches.id = ?;";
 
             $stmt = $db->prepare($sql);
             $id = $this->id;
@@ -64,6 +96,8 @@
                         $this->title = $row['title'];
                         $this->authors = $row['authors'];
                         $this->method = $row['method'];
+                        $this->course_id = $row['course_id'];
+                        $this->course = $row['course'];
                         $this->qr_code_link = $row['qr_code_link'];
                         $this->file = $row['file'];
                     }
@@ -86,6 +120,7 @@
                     method,
                     qr_code_link,
                     file,
+                    course_id,
                     created_at
                 )
             values
@@ -96,11 +131,12 @@
                     ?,
                     ?,
                     ?,
+                    ?,
                     now()
                 )
             ;";
             $stmt = $db->db->prepare($sql);
-            $stmt->bind_param('ssssss', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file);
+            $stmt->bind_param('ssssssi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id);
 
             $stmt->execute();
 
@@ -124,11 +160,12 @@
                 authors=?,
                 method=?,
                 qr_code_link=?,
-                file=?
+                file=?,
+                course_id=?
             where id = ?
             ;";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param('ssssssi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->id);
+            $stmt->bind_param('ssssssii', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id,$this->id);
 
             $stmt->execute();
 
