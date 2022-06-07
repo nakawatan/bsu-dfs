@@ -1,5 +1,5 @@
 <?php  
-    header('Location: '.'/research.php');
+    header('Location: '.'/landing.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

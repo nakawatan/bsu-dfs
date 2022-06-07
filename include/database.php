@@ -1,6 +1,11 @@
 <?php 
     class DB {
         public $db;
+        // private $servername = "sql102.epizy.com";
+        // private $username = "epiz_31247258";
+        // private $password = "HbOI6FP9QdcN36B";
+        // private $dbname = "epiz_31247258_dfs";
+
         private $servername = "localhost";
         private $username = "u488180748_UBSU0gc";
         private $password = "BatStateU0gc";

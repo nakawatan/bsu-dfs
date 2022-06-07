@@ -6,6 +6,21 @@
     if (isset($_REQUEST['filter-major-input'])){
         $obj->course_id = $_REQUEST['filter-major-input'];
     }
+    if (isset($_REQUEST['filter-text-input'])){
+        if ($_REQUEST['filter-field-input'] == "title") {
+            $obj->title = "%".$_REQUEST['filter-text-input']."%";
+        }else if ($_REQUEST['filter-field-input'] == "abstract") {
+            $obj->abstract = "%".$_REQUEST['filter-text-input']."%";
+        }else if ($_REQUEST['filter-field-input'] == "method") {
+            $obj->method = "%".$_REQUEST['filter-text-input']."%";
+        }else if ($_REQUEST['filter-field-input'] == "author") {
+            $obj->authors = "%".$_REQUEST['filter-text-input']."%";
+        }else if ($_REQUEST['filter-field-input'] == "major") {
+            $obj->course_id = $_REQUEST['filter-text-input'];
+        }else if ($_REQUEST['filter-field-input'] == "published_date") {
+            $obj->publish_date = "%".$_REQUEST['filter-text-input']."%";
+        }
+    }
 
     $data = $obj->get_researches();
 
@@ -31,7 +46,7 @@
             <?php include'sidebar.php'; ?>
             <div id="layoutSidenav_content">
                 <main>
-                    <div class="container-fluid px-4">
+                    <div class="main_container container-fluid px-4">
                         <h1 class="mt-4">Research</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
@@ -66,6 +81,21 @@
                                     </tr>
                                     <tr>
                                     <div class="mb-3">
+                                        <label for="user-level-input" class="form-label">Search:</label>
+                                        <input type="text" name="filter-text-input" class="form-control"/>
+                                        <label for="user-level-input" class="form-label">Field:</label>
+                                        <select name="filter-field-input" class="form-control">
+                                            <option value="title">Title</option>
+                                            <!-- <option value="major">Major</option> -->
+                                            <option value="author">Author</option>
+                                            <option value="abstract">Abstract</option>
+                                            <option value="method">Method</option>
+                                            <option value="published_date">Published Date</option>
+                                        </select>
+                                    </div>
+                                    </tr>
+                                    <tr>
+                                    <div class="mb-3">
                                         <button class="btn btn-warning">Filter</button>
                                     </div>
                                     </tr>
@@ -78,8 +108,9 @@
                                             <th>Abstract</th>
                                             <th>Title</th>
                                             <th>Authors</th>
-                                            <th>Method</th>
                                             <th>Major</th>
+                                            <th>Method</th>
+                                            <th>Published Date</th>
                                             <th>File</th>
                                             <th>QR Code</th>
                                         </tr>
@@ -89,8 +120,9 @@
                                             <th>Abstract</th>
                                             <th>Title</th>
                                             <th>Authors</th>
-                                            <th>Method</th>
                                             <th>Major</th>
+                                            <th>Method</th>
+                                            <th>Published Date</th>
                                             <th>File</th>
                                             <th>QR Code</th>
                                         </tr>
@@ -101,11 +133,12 @@
                                             $objData = json_encode($row);
                                             echo "
                                             <tr data-attr-details='${objData}'>
-                                                <td>${row['abstract']}</td>
+                                                <td style='white-space: nowrap; text-overflow:ellipsis; overflow: hidden; max-width:250px;line-height: 24px; '>${row['abstract']}</td>
                                                 <td>${row['title']}</td>
                                                 <td>${row['authors']}</td>
                                                 <td>${row['course']}</td>
                                                 <td>${row['method']}</td>
+                                                <td>${row['publish_date']}</td>
                                                 <td>${row['file']}</td>
                                                 <td><img src='${row['qr_code_link']}'></img></td>
                                                 <td>
@@ -166,7 +199,10 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="abstract-input" class="form-label">Abstract:</label>
-                        <input type="text" class="form-control" id="abstract-input">
+                        <!-- <input type="text" class="form-control" id="abstract-input"> -->
+                        <textarea class="form-control" id="abstract-input">
+
+                        </textarea>
                     </div>
                     <div class="mb-3">
                         <label for="title-input" class="form-label">Title:</label>
@@ -192,6 +228,17 @@
                         ?>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="date" class="col-sm-1 col-form-label">Date</label>
+                        <div class="input-group date" id="datepicker" data-date-format="yyyy-mm-dd">
+                            <input type="text" id="publish-date-input" class="form-control">
+                            <span class="input-group-append">
+                            <span class="input-group-text bg-white d-block">
+                            <i class="fa fa-calendar"></i>
+                            </span>
+                            </span>
+                        </div>
+                    </div> 
                     <div class="mb-3">
                         <label for="file-input" class="form-label">File:</label>
                         <input class="form-control" type="file" id="file-input">
@@ -264,6 +311,7 @@
         <?php include'scripts.php'; ?>
         <script>
             $(function() {
+                $('#datepicker').datepicker();
             });
             function openDeleteModal(id){
                 $("#delete-modal").modal("show");
@@ -298,7 +346,7 @@
                 $('#method-input').val(data.method);
                 $('#authors-input').val(data.authors);
                 $('#major-input').val(data.course_id);
-                console.log(data);
+                $('#publish-date-input').val(data.publish_date);
 
                 //intiate click events
                 $('#confirm-update-btn').unbind('click').on('click',function(){
@@ -316,6 +364,7 @@
                         formData.append("authors",$('#authors-input').val());
                         formData.append("r_method",$('#method-input').val());
                         formData.append("major_id",$('#major-input').val());
+                        formData.append("publish_date",$('#publish-date-input').val());
                         $.ajax({
                             url: '/api/',
                             // data: {
@@ -369,6 +418,7 @@
                         formData.append("authors",$('#authors-input').val());
                         formData.append("r_method",$('#method-input').val());
                         formData.append("major_id",$('#major-input').val());
+                        formData.append("publish_date",$('#publish-date-input').val());
                         $.ajax({
                             url: '/api/',
                             // data: {
@@ -404,6 +454,7 @@
                 $('#authors-input').val('');
                 $('#method-input').val('');
                 $('#major-input').val('');
+                $('#publish-date-input').val('');
             }
 
             function validateform(){
@@ -424,6 +475,12 @@
                 }
                 if(!$('#method-input').val()){
                     $('.error-alert-text').text("Method is required.");
+                    $('#error-alert-modal').modal('show');
+                    return false;
+                }
+
+                if(!$('#publish-date-input').val()){
+                    $('.error-alert-text').text("Publish Date is required.");
                     $('#error-alert-modal').modal('show');
                     return false;
                 }

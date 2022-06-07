@@ -17,6 +17,7 @@
         public $qr_code_link;
         public $course;
         public $course_id;
+        public $publish_date;
         public $QRPREFIX="DFS::";
 
         function get_researches () {
@@ -32,6 +33,31 @@
                 $types = $types."i";
                 $sql = $sql . " and course_id = ?";
                 $params[] = $this->course_id;
+            }
+            if ($this->title != ""){
+                $types = $types."s";
+                $sql = $sql . " and title like ?";
+                $params[] = $this->title;
+            }
+            if ($this->abstract != ""){
+                $types = $types."s";
+                $sql = $sql . " and abstract like ?";
+                $params[] = $this->abstract;
+            }
+            if ($this->authors != ""){
+                $types = $types."s";
+                $sql = $sql . " and authors like ?";
+                $params[] = $this->authors;
+            }
+            if ($this->method != ""){
+                $types = $types."2";
+                $sql = $sql . " and method like ?";
+                $params[] = $this->method;
+            }
+            if ($this->publish_date != ""){
+                $types = $types."s";
+                $sql = $sql . " and publish_date like ?";
+                $params[] = $this->publish_date;
             }
 
             if (count($params) > 0){
@@ -100,6 +126,7 @@
                         $this->course = $row['course'];
                         $this->qr_code_link = $row['qr_code_link'];
                         $this->file = $row['file'];
+                        $this->publish_date = $row['publish_date'];
                     }
                 // close the result.
                 // mysqli_free_result($result);
@@ -121,6 +148,7 @@
                     qr_code_link,
                     file,
                     course_id,
+                    publish_date,
                     created_at
                 )
             values
@@ -132,11 +160,12 @@
                     ?,
                     ?,
                     ?,
+                    ?,
                     now()
                 )
             ;";
             $stmt = $db->db->prepare($sql);
-            $stmt->bind_param('ssssssi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id);
+            $stmt->bind_param('ssssssis', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id,$this->publish_date);
 
             $stmt->execute();
 
@@ -161,11 +190,12 @@
                 method=?,
                 qr_code_link=?,
                 file=?,
-                course_id=?
+                course_id=?,
+                publish_date=?
             where id = ?
             ;";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param('ssssssii', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id,$this->id);
+            $stmt->bind_param('ssssssisi', $this->abstract,$this->title,$this->authors,$this->method,$this->qr_code_link,$this->file,$this->course_id,$this->publish_date,$this->id);
 
             $stmt->execute();
 

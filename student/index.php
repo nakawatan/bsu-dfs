@@ -42,7 +42,35 @@
     </style>
 <body>
     <div class="container">
-        <div class="row justify-content-center">
+    <div class="row justify-content-center landing-container" style="    
+    background-image: url(/images/logo_borderless.png),url(/images/building.jpg),url(/images/bsu_logo.png);
+    background-size: contain;
+    background-position: right bottom, left top,right,left;
+    background-repeat: no-repeat, no-repeat,no-repeat;">
+            <div class="col-lg-5" style="opacity:0.9">
+                <div class="card shadow-lg border-0 rounded-lg mt-5">
+                    <div>
+                        <div class="card-header"><h3 class="text-center font-weight-light my-4">Mission And Vision</h3></div>
+                        <div class="card-body">
+                                    <h3 class="text-center">University Vision</h3>
+                                    <p>A premier national university that develops leaders in global knowledge economy.</p>
+
+                                    <h3 class="text-center">University Mission</h3>
+                                    <p>A university commited to producing leaders by providing a 21st century learning environment through innovations in educations, multidisciplinary research, and community and industry partnerships in order to nurture the spirit of nationhood, propel the national economy, and engage the world for sustainable development.</p>
+                                    
+                                    <h3 class="text-center">Introduction</h3>
+                                    <p>
+                                        The College of Industrial Technology is the first college established in the university, and has since proven to be a premier producer of well-rounded and globally competitive professionals who meet local, national, and international demands for skilled workers who significantly contribute to the manpower resources in response to rapid industrialization of the modern world.
+                                    </p>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                        <button class="btn btn-success form-control proceed-scan">Proceed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center scanner-container" style="display:none">
             <div class="col-lg-5">
                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                     <div class="card-header"><h3 class="text-center font-weight-light my-4">Scan Qr Code</h3></div>
@@ -84,6 +112,10 @@
                     <label for="method-input" class="form-label">Method:</label>
                     <input type="text" class="form-control" id="method-input" readonly>
                 </div>
+                <div class="mb-3">
+                    <label for="major-input" class="form-label">Major:</label>
+                    <input type="text" class="form-control" id="major-input" readonly>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -97,6 +129,12 @@
 <script src="/assets/js/html5-qrcode.min.js"></script>
 <script src="/assets/js/jquery.js" crossorigin="anonymous"></script>
 <script>
+    $( document ).ready(function() {
+        $('.proceed-scan').unbind().click(function(){
+            $('.scanner-container').fadeIn();
+            $('.landing-container').fadeOut();
+        });
+    });
     function docReady(fn) {
         // see if DOM is already available
         if (document.readyState === "complete"
@@ -136,6 +174,7 @@
                         $('#title-input').val(response.data.title);
                         $('#method-input').val(response.data.method);
                         $('#authors-input').val(response.data.authors);
+                        $('#major-input').val(response.data.course);
 
                         $('#download-btn').attr({target: '_blank', 
                                 href  : response.data.file});

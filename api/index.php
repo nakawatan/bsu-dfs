@@ -379,6 +379,10 @@
                         if (isset($_REQUEST["major_id"])) {
                             $obj->course_id = $_REQUEST["major_id"];
                         }
+
+                        if (isset($_REQUEST["publish_date"])) {
+                            $obj->publish_date = $_REQUEST["publish_date"];
+                        }
                 
                         $obj->Update();
                 
@@ -418,6 +422,10 @@
 
                 if (isset($_REQUEST["major_id"])) {
                     $obj->course_id = $_REQUEST["major_id"];
+                }
+
+                if (isset($_REQUEST["publish_date"])) {
+                    $obj->publish_date = $_REQUEST["publish_date"];
                 }
                 
                 $obj->Save();

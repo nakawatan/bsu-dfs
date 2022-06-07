@@ -3,9 +3,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<title>Tables - SB Admin</title>
+<title>DFS</title>
 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
 <style>
     .modal-confirm {		
@@ -111,9 +112,34 @@
         display: inline-block;
         margin: 100px auto;
     }
+
+    main:before{
+        content: '';
+        display:block;
+        background: url('/images/logo_borderless.png') center center / 100% auto no-repeat;
+        width:45%;
+        height: 100%;
+        top:25px;
+        position: fixed;
+        left: 0;
+        right: 0;
+        margin: auto;
+        opacity: 0.1;
+        z-index: 7;
+    }
+    .demo-bg {
+        opacity: 0.2;
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        height: auto;
+    }
 </style>
 
 
 <link href="css/styles.css" rel="stylesheet" />
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 <script src="assets/js/jquery.js" crossorigin="anonymous"></script>
